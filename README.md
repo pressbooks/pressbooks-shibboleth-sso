@@ -80,6 +80,21 @@ The email can be filtered, example: `add_filter( 'pb_integrations_multidomain_em
 Because this plugin uses the fabulous [onelogin/php-saml](https://github.com/onelogin/php-saml/) toolkit, [many other configuration variables can be tweaked](https://github.com/onelogin/php-saml/#settings).
 
 
+## Saving logs in S3
+Add the following environment variables to your servers' Pressbooks instance configuration:
+
+ ```
+  LOG_LOGIN_ATTEMPTS (setting it to true it will enable the feature to the infrastructure level)
+  AWS_ACCESS_KEY_ID
+  AWS_SECRET_ACCESS_KEY
+  AWS_S3_OIDC_BUCKET
+  AWS_S3_REGION
+  AWS_S3_VERSION
+```
+
+After that, you will find a folders organized by environments, PB Network ID hashed format.  
+In each folder a file with format `YEAR-MONTH-saml_logs.log` will be saved.
+
 ## Screenshots 
 
 ![SAML2 Administration.](screenshot-1.png)
