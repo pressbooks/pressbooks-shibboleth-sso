@@ -81,10 +81,10 @@ Because this plugin uses the fabulous [onelogin/php-saml](https://github.com/one
 
 
 ## Saving logs in S3
-Add the following environment variables to your servers' Pressbooks instance configuration:
+If you use AWS and wish to log SAML attempts on your server, you will need define the following environment variables on the server which is hosting your Pressbooks instance:
 
  ```
-  LOG_LOGIN_ATTEMPTS (setting it to true it will enable the feature to the infrastructure level)
+  LOG_LOGIN_ATTEMPTS (setting this value to true will enable this feature at the infrastructure level)
   AWS_ACCESS_KEY_ID
   AWS_SECRET_ACCESS_KEY
   AWS_S3_OIDC_BUCKET
@@ -92,8 +92,7 @@ Add the following environment variables to your servers' Pressbooks instance con
   AWS_S3_VERSION
 ```
 
-After that, you will find a folders organized by environments, PB Network ID hashed format.  
-In each folder a file with format `YEAR-MONTH-saml_logs.log` will be saved.
+After these variables have been properly defined, basic information about SAML login attempts will be logged to your S3 bucket. A new file will be created each month so that the logs remain readable. Log storage will take place in a folder structure that looks like this `S3 Bucket > saml_logs > {ENVIRONMENT} > {Network URL hashed though wp_hash function} > {YYYY-MM} > saml_logs.log`.
 
 ## Screenshots 
 
