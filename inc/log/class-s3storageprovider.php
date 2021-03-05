@@ -50,22 +50,6 @@ class S3StorageProvider implements StorageProvider {
 
 	const AWS_MAIN_LOG_FOLDER = 'saml_logs';
 
-	public function __constructor() {
-		if ( self::areEnvironmentVariablesPresent() ) {
-			$this->region = env( 'AWS_S3_REGION' );
-			$this->version = env( 'AWS_S3_VERSION' );
-			$this->bucket_name = env( 'AWS_S3_OIDC_BUCKET' );
-			$this->access_key_id = env( 'AWS_ACCESS_KEY_ID' );
-			$this->secret_key = env( 'AWS_SECRET_ACCESS_KEY' );
-			$environment = env( 'WP_ENV' ) ? env( 'WP_ENV' ) : 'production';
-			$scheme = is_ssl() ? 'https' : 'http';
-			$this->file_path = 's3://' . $this->bucket_name . '/' . self::AWS_MAIN_LOG_FOLDER . '/' . $environment .
-				'/' . wp_hash( network_home_url( '', $scheme ) ) . '/' . current_time( 'Y-m' ) . self::FILENAME_FORMAT;
-		} else {
-			debug_error_log( 'Error initializing S3 Storage Provider: Some environment variables are not present.' );
-		}
-	}
-
 	private function initializeProperties() {
 		if ( self::areEnvironmentVariablesPresent() ) {
 			$this->region = env( 'AWS_S3_REGION' );
@@ -102,6 +86,8 @@ class S3StorageProvider implements StorageProvider {
 				putenv( 'AWS_CONFIG_FILE=' . __DIR__ . '/' . self::AWS_CONFIG_FILENAME );
 			}
 			return true;
+		} else {
+			debug_error_log( 'Error initializing S3 Storage Provider: Some environment variables are not present.' );
 		}
 		return false;
 	}
