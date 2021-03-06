@@ -19,10 +19,12 @@ class Log {
 	 */
 	private $file_header;
 
+	const CSV_COLUMNS = [ 'Date', 'Key', 'Value' ];
+
 	public function __construct( StorageProvider $store_provider ) {
 		$this->store_provider = $store_provider;
 		$this->data = [];
-		$this->file_header = 'Date,Key,Value' . "\n";
+		$this->file_header = implode( ',', self::CSV_COLUMNS ) . "\n";
 	}
 
 	public function addRowToData( string $key, array $value ) {
