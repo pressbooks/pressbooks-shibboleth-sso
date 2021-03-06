@@ -44,13 +44,13 @@ class S3StorageProvider implements StorageProvider {
 	 */
 	private $file_path;
 
-	const FILENAME_FORMAT = '-saml_logs.log';
+	const FILENAME_FORMAT = '-saml_logs.csv';
 
 	const AWS_CONFIG_FILENAME = 'does_not_exist.ini';
 
 	const AWS_MAIN_LOG_FOLDER = 'saml_logs';
 
-	private function initializeProperties() {
+	private function create() {
 		if ( self::areEnvironmentVariablesPresent() ) {
 			$this->region = env( 'AWS_S3_REGION' );
 			$this->version = env( 'AWS_S3_VERSION' );
@@ -59,8 +59,17 @@ class S3StorageProvider implements StorageProvider {
 			$this->secret_key = env( 'AWS_SECRET_ACCESS_KEY' );
 			$environment = env( 'WP_ENV' ) ? env( 'WP_ENV' ) : 'production';
 			$scheme = is_ssl() ? 'https' : 'http';
-			$this->file_path = 's3://' . $this->bucket_name . '/' . self::AWS_MAIN_LOG_FOLDER . '/' . $environment .
-				'/' . wp_hash( network_home_url( '', $scheme ) ) . '/' . current_time( 'Y-m' ) . self::FILENAME_FORMAT;
+			if ( is_null( $this->file_path ) ) {
+				$this->file_path = 's3://' . $this->bucket_name . '/' . self::AWS_MAIN_LOG_FOLDER . '/' . $environment .
+					'/' . wp_hash( network_home_url( '', $scheme ) ) . '/' . current_time( 'Y-m' ) . self::FILENAME_FORMAT;
+			}
+			if ( is_null( $this->client ) ) {
+				$this->client = new S3Client( [
+					'region' => $this->region,
+					'version' => $this->version,
+					'credentials' => CredentialProvider::env(),
+				] );
+			}
 			return true;
 		} else {
 			debug_error_log( 'Error initializing S3 Storage Provider: Some environment variables are not present.' );
@@ -92,16 +101,22 @@ class S3StorageProvider implements StorageProvider {
 		return false;
 	}
 
-	public function store( string $data ) {
-		if ( $this->initializeProperties() ) {
+	public function setS3Client( S3Client $s3_client ) {
+		$this->client = $s3_client;
+	}
+
+	public function setFilePath( string $file_path ) {
+		$this->file_path = $file_path;
+	}
+
+	public function store( string $data, string $file_header = null ) {
+		if ( $this->create() ) {
 			try {
-				$this->client = new S3Client( [
-					'region' => $this->region,
-					'version' => $this->version,
-					'credentials' => CredentialProvider::env(),
-				] );
 				$this->client->registerStreamWrapper();
 				$stream = fopen( $this->file_path, 'a' );
+				if ( ! is_null( $file_header ) && ! file_exists( $this->file_path ) ) {
+					$data = $file_header . $data;
+				}
 				fwrite( $stream, $data );
 				fclose( $stream );
 				return true;

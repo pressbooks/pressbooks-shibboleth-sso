@@ -30,9 +30,10 @@
 		"aws/aws-sdk-php": "^3.173"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "~6.5",
+    "phpunit/phpunit": "^7",
 		"pressbooks/coding-standards": "^1.0",
-		"wpreadme2markdown/wp2md": "^3.0"
+		"wpreadme2markdown/wp2md": "^3.0",
+		"php-mock/php-mock-phpunit": "^2.6"
 	},
 	"scripts": {
 		"test": [

@@ -2,12 +2,12 @@
 
 namespace PressbooksSamlSso;
 
-use PressbooksSamlSso\Log\Log;
-use PressbooksSamlSso\Log\S3StorageProvider as S3StorageProvider;
 use function Pressbooks\Utility\empty_space;
 use function Pressbooks\Utility\str_remove_prefix;
 use function Pressbooks\Utility\str_starts_with;
 use PressbooksMix\Assets;
+use PressbooksSamlSso\Log\Log;
+use PressbooksSamlSso\Log\S3StorageProvider as S3StorageProvider;
 
 /**
  * SAML: Security Assertion Markup Language
@@ -32,14 +32,6 @@ class SAML {
 		'eduPersonPrincipalName' => 'urn:oid:1.3.6.1.4.1.5923.1.1.1.6',
 		'mail' => 'urn:oid:0.9.2342.19200300.100.1.3',
 		'uid' => 'urn:oid:0.9.2342.19200300.100.1.1',
-	];
-
-	const FIELDS_LOG = [
-		'Date',
-		'ACS',
-		'Request ID',
-		'Session',
-		'SAML Attributes'
 	];
 
 	/**
